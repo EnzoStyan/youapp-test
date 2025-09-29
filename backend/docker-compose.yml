@@ -1,0 +1,31 @@
+version: '3.8'
+services:
+  # Service untuk aplikasi NestJS kita
+  api:
+    build: .
+    ports:
+      - "3000:3000" # Memetakan port container ke komputer kita
+    volumes:
+      - .:/usr/src/app # Sinkronisasi kode langsung dari folder kita ke container
+      - /usr/src/app/node_modules
+    environment:
+      - DATABASE_HOST=db
+      - DATABASE_PORT=27017
+      - DATABASE_NAME=youapp
+      - DATABASE_USER=admin
+      - DATABASE_PASSWORD=password
+      - JWT_SECRET=c8a8e54d4ca3f9210350cba9ee5bd675
+    depends_on:
+      - db # Memberitahu Docker untuk menjalankan service 'db' terlebih dahulu
+
+  # Service untuk database MongoDB
+  db:
+    image: mongo:latest
+    ports:
+      - "27017:27017"
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=admin
+      - MONGO_INITDB_ROOT_PASSWORD=password
+      
+    volumes:
+      - ./mongo-data:/data/db # Menyimpan data database secara permanen
